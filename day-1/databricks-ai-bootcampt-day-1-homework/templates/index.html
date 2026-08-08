@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Support · Lakebase</title>
+  <style>
+    :root {
+      --bg: #0f0f10;
+      --bg-elev: #1c1c1e;
+      --bg-elev2: #2a2a2c;
+      --sidebar: #161617;
+      --text: #f2f2f2;
+      --text-dim: #9a9a9e;
+      --text-dimmer: #6a6a6e;
+      --accent: #e8663a;
+      --border: #313134;
+      --radius: 14px;
+      --shadow: 0 8px 30px rgba(0,0,0,.45);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font: 15px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .app { display: grid; grid-template-columns: 260px 1fr; height: 100vh; }
+
+    /* ---------------- Sidebar ---------------- */
+    .sidebar {
+      background: var(--sidebar);
+      border-right: 1px solid var(--border);
+      padding: 22px 14px;
+      overflow-y: auto;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; padding: 4px 10px 18px; }
+    .brand .dot { width: 26px; height: 26px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent), #b8431f); }
+    .brand b { font-size: 16px; letter-spacing: .2px; }
+    .nav-section { color: var(--text-dimmer); font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .8px; padding: 16px 12px 6px; }
+    .nav-item {
+      display: flex; align-items: center; gap: 11px; padding: 8px 12px;
+      border-radius: 9px; color: var(--text-dim); cursor: pointer; user-select: none;
+      font-weight: 500; white-space: nowrap;
+    }
+    .nav-item:hover { background: var(--bg-elev); color: var(--text); }
+    .nav-item.active { background: var(--bg-elev2); color: var(--text); }
+    .nav-item .ico { width: 18px; text-align: center; opacity: .9; }
+    .nav-item .count { margin-left: auto; font-size: 12px; color: var(--text-dimmer);
+      background: var(--bg-elev); padding: 1px 8px; border-radius: 20px; }
+    .nav-item.active .count { background: var(--bg); }
+    .who { margin-top: auto; padding: 14px 12px 2px; display: flex; align-items: center; gap: 10px;
+      border-top: 1px solid var(--border); color: var(--text-dim); font-size: 13px; }
+    .who .avatar { width: 30px; height: 30px; border-radius: 50%;
+      background: linear-gradient(135deg,#5b5b60,#37373a); display: grid; place-items: center;
+      font-weight: 700; color: #fff; font-size: 13px; }
+
+    /* ---------------- Main ---------------- */
+    .main { overflow-y: auto; padding: 34px 44px 60px; }
+    .topbar { display: flex; align-items: center; gap: 16px; margin-bottom: 8px; }
+    h1 { font-family: Georgia, "Times New Roman", serif; font-size: 40px; margin: 0; letter-spacing: .3px; }
+    .spacer { flex: 1; }
+    .search { display: flex; align-items: center; gap: 8px; background: var(--bg-elev);
+      border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; width: 260px; }
+    .search input { background: transparent; border: 0; color: var(--text); outline: none; width: 100%; }
+    .btn { border: 0; border-radius: 10px; padding: 9px 16px; font-weight: 600; cursor: pointer;
+      font-size: 14px; background: var(--bg-elev2); color: var(--text); }
+    .btn:hover { filter: brightness(1.15); }
+    .btn.primary { background: var(--accent); color: #fff; }
+    .btn.ghost { background: transparent; border: 1px solid var(--border); }
+    .btn.danger { background: #d64545; color: #fff; }
+    .subtitle { color: var(--text-dim); margin: 2px 0 26px; }
+
+    /* stats tiles */
+    .stats { display: grid; grid-template-columns: repeat(auto-fit,minmax(150px,1fr));
+      gap: 14px; margin-bottom: 34px; }
+    .tile { background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 16px 18px; }
+    .tile .n { font-size: 30px; font-weight: 700; }
+    .tile .l { color: var(--text-dim); font-size: 13px; margin-top: 2px; }
+
+    /* card grid */
+    .section-head { font-family: Georgia, serif; font-size: 24px; margin: 8px 0 16px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(250px,1fr)); gap: 18px; }
+    .card { background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 18px; cursor: pointer; transition: transform .12s ease, border-color .12s ease;
+      display: flex; flex-direction: column; gap: 12px; min-height: 150px; }
+    .card:hover { transform: translateY(-3px); border-color: #4a4a4e; box-shadow: var(--shadow); }
+    .card .title { font-weight: 600; font-size: 16px; line-height: 1.3; }
+    .card .meta { color: var(--text-dimmer); font-size: 12px; margin-top: auto; }
+    .badges { display: flex; gap: 7px; flex-wrap: wrap; }
+    .badge { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 20px;
+      text-transform: capitalize; letter-spacing: .2px; }
+    .s-open { background: rgba(70,140,255,.18); color: #6ea8ff; }
+    .s-in_progress { background: rgba(240,180,40,.18); color: #f0b428; }
+    .s-resolved { background: rgba(80,200,120,.18); color: #4ecb78; }
+    .p-low { background: rgba(150,150,155,.16); color: #b6b6bb; }
+    .p-medium { background: rgba(90,150,255,.14); color: #8fb4ff; }
+    .p-high { background: rgba(240,150,60,.16); color: #f0a63c; }
+    .p-urgent { background: rgba(230,70,70,.18); color: #f07070; }
+    .cat { background: var(--bg-elev2); color: var(--text-dim); }
+    .empty { color: var(--text-dim); padding: 60px 0; text-align: center; }
+
+    /* ---------------- Modal / detail ---------------- */
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.55);
+      display: none; align-items: center; justify-content: center; padding: 24px; z-index: 20; }
+    .overlay.show { display: flex; }
+    .modal { background: var(--bg-elev); border: 1px solid var(--border); border-radius: 18px;
+      width: 100%; max-width: 620px; max-height: 88vh; overflow-y: auto; box-shadow: var(--shadow); }
+    .modal-head { padding: 22px 24px 14px; border-bottom: 1px solid var(--border); position: sticky;
+      top: 0; background: var(--bg-elev); }
+    .modal-head h2 { margin: 0 0 10px; font-size: 22px; }
+    .modal-body { padding: 20px 24px 24px; }
+    .close { position: absolute; top: 18px; right: 20px; cursor: pointer; color: var(--text-dim);
+      font-size: 22px; line-height: 1; }
+    .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    label { display: block; font-size: 12px; color: var(--text-dim); margin: 14px 0 6px;
+      font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+    input[type=text], textarea, select {
+      width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text);
+      border-radius: 10px; padding: 10px 12px; font: inherit; outline: none; }
+    input[type=text]:focus, textarea:focus, select:focus { border-color: var(--accent); }
+    textarea { resize: vertical; min-height: 64px; }
+    .msg { background: var(--bg); border: 1px solid var(--border); border-radius: 12px;
+      padding: 12px 14px; margin-bottom: 10px; }
+    .msg .who2 { font-size: 12px; color: var(--accent); font-weight: 600; }
+    .msg .when { font-size: 11px; color: var(--text-dimmer); float: right; }
+    .msg .txt { margin-top: 5px; }
+    .err { color: #f07070; font-size: 13px; margin-top: 8px; min-height: 18px; }
+    .hint { color: var(--text-dimmer); font-size: 12px; margin-top: 6px; }
+    .divider { border: 0; border-top: 1px solid var(--border); margin: 22px 0; }
+    .flex-between { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    @media (max-width: 720px) { .app { grid-template-columns: 1fr; } .sidebar { display: none; } }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand"><div class="dot"></div><b>Support</b></div>
+      <div class="nav-item active" data-filter="home" onclick="selectNav(this)">
+        <span class="ico">🏠</span> Home
+      </div>
+
+      <div class="nav-section">Library</div>
+      <div class="nav-item" data-filter="status:" onclick="selectNav(this)">
+        <span class="ico">📚</span> All Tickets <span class="count" id="c-all">0</span>
+      </div>
+      <div class="nav-item" data-filter="status:open" onclick="selectNav(this)">
+        <span class="ico">🔵</span> Open <span class="count" id="c-open">0</span>
+      </div>
+      <div class="nav-item" data-filter="status:in_progress" onclick="selectNav(this)">
+        <span class="ico">🟡</span> In Progress <span class="count" id="c-in_progress">0</span>
+      </div>
+      <div class="nav-item" data-filter="status:resolved" onclick="selectNav(this)">
+        <span class="ico">🟢</span> Resolved <span class="count" id="c-resolved">0</span>
+      </div>
+
+      <div class="nav-section">My Collections</div>
+      <div id="collections"></div>
+
+      <div class="who">
+        <div class="avatar" id="avatar">?</div>
+        <div id="whoami">Loading…</div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <div class="topbar">
+        <h1 id="page-title">Home</h1>
+        <div class="spacer"></div>
+        <div class="search">
+          <span>🔍</span>
+          <input id="search" type="text" placeholder="Search tickets…"
+                 oninput="debouncedSearch()" />
+        </div>
+        <button class="btn primary" onclick="openCreate()">+ New Ticket</button>
+      </div>
+      <div class="subtitle" id="page-sub">All support tickets, backed by Lakebase.</div>
+
+      <div class="stats" id="stats"></div>
+
+      <div class="section-head" id="section-head">Top Picks</div>
+      <div class="grid" id="grid"></div>
+    </main>
+  </div>
+
+  <!-- Create modal -->
+  <div class="overlay" id="create-overlay">
+    <div class="modal" style="max-width:520px;">
+      <div class="modal-head">
+        <span class="close" onclick="closeModal('create-overlay')">×</span>
+        <h2>New Ticket</h2>
+      </div>
+      <div class="modal-body">
+        <label>Title</label>
+        <input type="text" id="new-title" placeholder="Short summary of the issue" maxlength="200" />
+        <div class="row">
+          <div style="flex:1">
+            <label>Priority</label>
+            <select id="new-priority">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+              <option value="urgent">Urgent</option>
+            </select>
+          </div>
+          <div style="flex:1">
+            <label>Category</label>
+            <select id="new-category">
+              <option value="general" selected>General</option>
+              <option value="bug">Bug</option>
+              <option value="feature">Feature</option>
+              <option value="question">Question</option>
+              <option value="account">Account</option>
+              <option value="billing">Billing</option>
+            </select>
+          </div>
+        </div>
+        <div class="err" id="create-err"></div>
+        <div class="hint">Created by you (your Databricks login).</div>
+        <hr class="divider" />
+        <div class="flex-between">
+          <button class="btn ghost" onclick="closeModal('create-overlay')">Cancel</button>
+          <button class="btn primary" onclick="submitCreate()">Create ticket</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail modal -->
+  <div class="overlay" id="detail-overlay">
+    <div class="modal">
+      <div class="modal-head">
+        <span class="close" onclick="closeModal('detail-overlay')">×</span>
+        <h2 id="d-title">Ticket</h2>
+        <div class="row" id="d-badges"></div>
+      </div>
+      <div class="modal-body">
+        <div class="flex-between">
+          <div class="meta" id="d-meta" style="color:var(--text-dim);font-size:13px;"></div>
+          <div class="row">
+            <select id="d-status" onchange="changeStatus()" style="width:auto;">
+              <option value="open">Open</option>
+              <option value="in_progress">In Progress</option>
+              <option value="resolved">Resolved</option>
+            </select>
+          </div>
+        </div>
+
+        <hr class="divider" />
+        <div style="font-weight:600;margin-bottom:12px;">Messages</div>
+        <div id="d-messages"></div>
+
+        <label>Add a message</label>
+        <textarea id="d-newmsg" placeholder="Type your reply…"></textarea>
+        <div class="err" id="detail-err"></div>
+        <div class="flex-between" style="margin-top:12px;">
+          <button class="btn danger" onclick="deleteTicket()">Delete ticket</button>
+          <button class="btn primary" onclick="submitMessage()">Send message</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const CATEGORIES = ["general","bug","feature","question","account","billing"];
+    let currentFilter = { type: "home", value: "" };
+    let currentTicket = null;
+    let searchTimer = null;
+
+    async function api(path, opts) {
+      const res = await fetch(path, opts);
+      const data = res.status === 204 ? {} : await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
+      return data;
+    }
+    const esc = (s) => String(s ?? "").replace(/[&<>"']/g,
+      c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+    const fmt = (ts) => ts ? new Date(ts).toLocaleString() : "";
+
+    async function loadMe() {
+      try {
+        const me = await api("/api/me");
+        const email = me.email || "unknown";
+        document.getElementById("whoami").textContent = email;
+        document.getElementById("avatar").textContent = (email[0] || "?").toUpperCase();
+      } catch (e) { document.getElementById("whoami").textContent = "unknown user"; }
+    }
+
+    async function loadStats() {
+      try {
+        const s = await api("/api/stats");
+        document.getElementById("c-all").textContent = s.total_tickets;
+        ["open","in_progress","resolved"].forEach(k =>
+          document.getElementById("c-" + k).textContent = s.by_status[k] || 0);
+        document.getElementById("stats").innerHTML = `
+          <div class="tile"><div class="n">${s.total_tickets}</div><div class="l">Total tickets</div></div>
+          <div class="tile"><div class="n">${s.by_status.open||0}</div><div class="l">Open</div></div>
+          <div class="tile"><div class="n">${s.by_status.in_progress||0}</div><div class="l">In progress</div></div>
+          <div class="tile"><div class="n">${s.by_status.resolved||0}</div><div class="l">Resolved</div></div>
+          <div class="tile"><div class="n">${s.total_messages}</div><div class="l">Messages</div></div>
+          <div class="tile"><div class="n">${s.by_priority.urgent||0}</div><div class="l">Urgent</div></div>`;
+      } catch (e) { /* stats are best-effort */ }
+    }
+
+    async function loadCollections() {
+      const box = document.getElementById("collections");
+      box.innerHTML = CATEGORIES.map(c => `
+        <div class="nav-item" data-filter="category:${c}" onclick="selectNav(this)">
+          <span class="ico">▤</span> ${c[0].toUpperCase() + c.slice(1)}
+        </div>`).join("");
+    }
+
+    function selectNav(el) {
+      document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+      el.classList.add("active");
+      const [type, value] = el.dataset.filter.split(":");
+      currentFilter = { type, value: value || "" };
+      const label = el.textContent.trim().replace(/\s*\d+$/, "");
+      document.getElementById("page-title").textContent = type === "home" ? "Home" : label;
+      document.getElementById("section-head").textContent =
+        type === "home" ? "All Tickets" : label;
+      document.getElementById("stats").style.display = type === "home" ? "grid" : "none";
+      loadTickets();
+    }
+
+    function debouncedSearch() {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(loadTickets, 250);
+    }
+
+    async function loadTickets() {
+      const params = new URLSearchParams();
+      if (currentFilter.type === "status" && currentFilter.value)
+        params.set("status", currentFilter.value);
+      if (currentFilter.type === "category" && currentFilter.value)
+        params.set("category", currentFilter.value);
+      const q = document.getElementById("search").value.trim();
+      if (q) params.set("q", q);
+
+      const grid = document.getElementById("grid");
+      try {
+        const tickets = await api("/api/tickets?" + params.toString());
+        if (!tickets.length) {
+          grid.innerHTML = `<div class="empty">No tickets here yet.</div>`;
+          return;
+        }
+        grid.innerHTML = tickets.map(t => `
+          <div class="card" onclick="openDetail(${t.ticket_id})">
+            <div class="badges">
+              <span class="badge s-${t.status}">${t.status.replace("_"," ")}</span>
+              <span class="badge p-${t.priority}">${t.priority}</span>
+              <span class="badge cat">${esc(t.category)}</span>
+            </div>
+            <div class="title">${esc(t.title)}</div>
+            <div class="meta">
+              ${esc(t.created_by)}<br/>
+              ${t.message_count} message${t.message_count == 1 ? "" : "s"} · ${fmt(t.created_at)}
+            </div>
+          </div>`).join("");
+      } catch (e) {
+        grid.innerHTML = `<div class="empty">⚠️ ${esc(e.message)}</div>`;
+      }
+    }
+
+    // ---- Create ----
+    function openCreate() {
+      document.getElementById("new-title").value = "";
+      document.getElementById("new-priority").value = "medium";
+      document.getElementById("new-category").value = "general";
+      document.getElementById("create-err").textContent = "";
+      document.getElementById("create-overlay").classList.add("show");
+    }
+    async function submitCreate() {
+      const title = document.getElementById("new-title").value.trim();
+      const errBox = document.getElementById("create-err");
+      if (!title) { errBox.textContent = "Please enter a title."; return; }
+      try {
+        await api("/api/tickets", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title,
+            priority: document.getElementById("new-priority").value,
+            category: document.getElementById("new-category").value,
+          }),
+        });
+        closeModal("create-overlay");
+        await Promise.all([loadTickets(), loadStats()]);
+      } catch (e) { errBox.textContent = e.message; }
+    }
+
+    // ---- Detail ----
+    async function openDetail(id) {
+      try {
+        const t = await api(`/api/tickets/${id}`);
+        currentTicket = t;
+        document.getElementById("d-title").textContent = t.title;
+        document.getElementById("d-badges").innerHTML = `
+          <span class="badge p-${t.priority}">${t.priority}</span>
+          <span class="badge cat">${esc(t.category)}</span>`;
+        document.getElementById("d-meta").innerHTML =
+          `Opened by ${esc(t.created_by)} · ${fmt(t.created_at)} · #${t.ticket_id}`;
+        document.getElementById("d-status").value = t.status;
+        renderMessages(t.messages);
+        document.getElementById("d-newmsg").value = "";
+        document.getElementById("detail-err").textContent = "";
+        document.getElementById("detail-overlay").classList.add("show");
+      } catch (e) { alert(e.message); }
+    }
+    function renderMessages(messages) {
+      const box = document.getElementById("d-messages");
+      box.innerHTML = (messages || []).map(m => `
+        <div class="msg">
+          <span class="who2">${esc(m.author)}</span>
+          <span class="when">${fmt(m.created_at)}</span>
+          <div class="txt">${esc(m.message_text)}</div>
+        </div>`).join("") || `<div class="hint">No messages yet.</div>`;
+    }
+    async function submitMessage() {
+      const text = document.getElementById("d-newmsg").value.trim();
+      const errBox = document.getElementById("detail-err");
+      if (!text) { errBox.textContent = "Message can't be empty."; return; }
+      try {
+        await api(`/api/tickets/${currentTicket.ticket_id}/messages`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message_text: text }),
+        });
+        const t = await api(`/api/tickets/${currentTicket.ticket_id}`);
+        renderMessages(t.messages);
+        document.getElementById("d-newmsg").value = "";
+        errBox.textContent = "";
+        await Promise.all([loadTickets(), loadStats()]);
+      } catch (e) { errBox.textContent = e.message; }
+    }
+    async function changeStatus() {
+      const status = document.getElementById("d-status").value;
+      try {
+        await api(`/api/tickets/${currentTicket.ticket_id}/status`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status }),
+        });
+        currentTicket.status = status;
+        await Promise.all([loadTickets(), loadStats()]);
+      } catch (e) { document.getElementById("detail-err").textContent = e.message; }
+    }
+    async function deleteTicket() {
+      if (!confirm(`Delete ticket #${currentTicket.ticket_id} and all its messages?\nThis cannot be undone.`))
+        return;
+      try {
+        await api(`/api/tickets/${currentTicket.ticket_id}`, { method: "DELETE" });
+        closeModal("detail-overlay");
+        await Promise.all([loadTickets(), loadStats()]);
+      } catch (e) { document.getElementById("detail-err").textContent = e.message; }
+    }
+
+    function closeModal(id) { document.getElementById(id).classList.remove("show"); }
+    document.querySelectorAll(".overlay").forEach(o =>
+      o.addEventListener("click", e => { if (e.target === o) o.classList.remove("show"); }));
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape") document.querySelectorAll(".overlay").forEach(o => o.classList.remove("show"));
+    });
+
+    // init
+    loadMe();
+    loadCollections();
+    loadStats();
+    loadTickets();
+  </script>
+</body>
+</html>

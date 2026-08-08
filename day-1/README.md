@@ -1,8 +1,8 @@
-# Day 1: Setting Up Lakebase and App
+# Day 1: Lakebase and Databricks App
 
 ## What was built on day 1
 
-![](images/lakebase_and_app.png)
+![](../images/lakebase_and_app.png)
 
 ## What is the difference between a database and a data lake?
 
@@ -21,7 +21,7 @@
 
 ### The old way
 
-![](images/old.png)
+![](../images/old.png)
 
 The problems with this way are
 - What if the data changes more often than once a day?
@@ -30,7 +30,7 @@ The problems with this way are
 
 ### The new world (with CDC)
 
-![](images/new.png)
+![](../images/new.png)
 
 Why is this better?
 - No data pipeline
@@ -40,4 +40,4 @@ Why is this better?
 
 ## How can we make a Databricks App work with Lakebase?
 
-See [Databricks AI Bootcampt Day 1 Homework](https://github.com/ppkhai2612/databricks-ai-bootcampt-day-1-homework)
+See [Lab](databricks-lakebase-app-day-1/) and [Homework](databricks-ai-bootcampt-day-1-homework/)
